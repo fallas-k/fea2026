@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Inicio</title>
+
+  <link rel="stylesheet" href="styleindex.css">
+</head>
+<body>
+
+<header class="topbar">
+  <div class="brand">
+    <span>FEA 2026</span>
+  </div>
+
+  <img class="topbar-logo" src="Imagenes/26FEA.webp" alt="Logo FEA 2026">
+
+  <div class="header-actions">
+    <a class="btn" href="login.html">Iniciar Sesión</a>
+  </div>
+</header>
+<img class="imagen-esquina" src="Imagenes/ciber.jpeg" alt="Marca de agua">
+<img class="imagen-esquina-iz" src="Imagenes/Untitled.jpeg" alt="Marca de agua">
+
+<main>
+
+  <section class="section-home">
+
+    <div class="home-welcome">
+
+      <h1>¡Bienvenido(a)!</h1>
+
+      <p>
+        Accede a las secciones de la página desde aquí.
+      </p>
+
+      <div class="home-cta">
+
+        <a class="nav-btn" href="Literario/cuento.html">
+          Cuento
+        </a>
+
+        <a class="nav-btn" href="Literario/cuento_ilustrado.html">
+          Cuento Ilustrado
+        </a>
+
+        <a class="nav-btn" href="Literario/poesia.html">
+          Poesia
+        </a>
+
+      </div>
+
+    </div>
+
+  </section>
+
+</main>
+
+<script>
+const rol = localStorage.getItem("rol");
+
+if (rol !== "escenica") {
+  window.location.href = "login.html";
+}
+</script>
+
+</body>
+</html>

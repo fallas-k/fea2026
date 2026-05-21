@@ -1,0 +1,312 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<title>Admin FEA</title>
+
+<style>
+
+body {
+  margin: 0;
+  font-family: Arial;
+  background: #0f0f0f;
+  color: white;
+  display: flex;
+}
+
+.sidebar {
+  width: 240px;
+  background: #111;
+  height: 100vh;
+  padding: 20px;
+  box-sizing: border-box;
+  border-right: 2px solid #00ffcc;
+}
+
+.sidebar button {
+  width: 100%;
+  margin-top: 15px;
+  padding: 15px;
+  background: transparent;
+  border: 1px solid #333;
+  color: white;
+  cursor: pointer;
+  text-align: left;
+}
+
+.sidebar button:hover {
+  background: #00ffcc;
+  color: black;
+}
+
+.content {
+  flex: 1;
+  padding: 40px;
+}
+
+.section {
+  display: none;
+}
+
+.active {
+  display: block;
+}
+
+.center-logo {
+  text-align: center;
+  margin-top: 80px;
+}
+
+.center-logo img {
+  width: 400px;
+}
+
+.bottom-logos {
+  display: flex;
+  justify-content: center;
+  gap: 700px;
+  margin-top: 80px;
+}
+
+.bottom-logos img {
+  width: 100px;
+  height: 100px;
+  object-fit: cover;
+  border-radius: 20px;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 20px;
+}
+
+th, td {
+  border: 1px solid #333;
+  padding: 10px;
+}
+
+th {
+  background: #222;
+}
+
+</style>
+</head>
+
+<body>
+
+<div class="sidebar">
+
+  <button onclick="showSection('home')">
+    Inicio
+  </button>
+
+  <button onclick="showSection('jueces')">
+    Jueces
+  </button>
+
+  <button onclick="showSection('resultados')">
+    Resultados
+  </button>
+
+  <button onclick="logout()">
+    Salir
+  </button>
+
+</div>
+
+<div class="content">
+
+  <!-- HOME -->
+  <div id="home" class="section active">
+
+    <div class="center-logo">
+      <img src="Imagenes/26FEA.webp">
+    </div>
+
+    <div class="bottom-logos">
+      <img src="Imagenes/ciber.jpeg">
+      <img src="Imagenes/Untitled.jpeg">
+    </div>
+
+  </div>
+
+  <!-- JUECES -->
+  <div id="jueces" class="section">
+
+    <h2>Lista de Jueces</h2>
+
+    <table>
+
+      <thead>
+
+        <tr>
+          <th>Nombre</th>
+          <th>Usuario</th>
+          <th>Rol</th>
+        </tr>
+
+      </thead>
+
+      <tbody id="tabla-jueces"></tbody>
+
+    </table>
+
+  </div>
+
+  <!-- RESULTADOS -->
+  <div id="resultados" class="section">
+
+    <h2>Resultados FEA</h2>
+
+    <table>
+
+      <thead>
+
+        <tr>
+          <th>Juez</th>
+          <th>Categoría</th>
+          <th>Puntaje</th>
+          <th>Obra</th>
+        </tr>
+
+      </thead>
+
+      <tbody id="tabla-resultados"></tbody>
+
+    </table>
+
+  </div>
+
+</div>
+
+<script type="module">
+
+import { auth, db } from "./firebase.js";
+
+import {
+  signOut
+} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+
+import {
+  collection,
+  getDocs
+} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+
+/* PROTEGER ADMIN */
+
+const rol = localStorage.getItem("rol");
+
+if (rol !== "admin") {
+
+  window.location.href = "login.html";
+
+}
+
+/* CAMBIAR SECCIONES */
+
+window.showSection = async function(sec) {
+
+  document
+    .querySelectorAll(".section")
+    .forEach(s => s.classList.remove("active"));
+
+  document
+    .getElementById(sec)
+    .classList.add("active");
+
+  if (sec === "jueces") {
+
+    await loadJueces();
+
+  }
+
+  if (sec === "resultados") {
+
+    await loadResultados();
+
+  }
+
+}
+
+/* CARGAR JUECES */
+
+async function loadJueces() {
+
+  const table =
+    document.getElementById("tabla-jueces");
+
+  table.innerHTML = "";
+
+  const snap =
+    await getDocs(collection(db, "usuarios"));
+
+  snap.forEach((docu) => {
+
+    const d = docu.data();
+
+    table.innerHTML += `
+
+      <tr>
+
+        <td>${d.nombre || ""}</td>
+        <td>${d.usuario || ""}</td>
+        <td>${d.rol || ""}</td>
+
+      </tr>
+
+    `;
+
+  });
+
+}
+
+/* CARGAR RESULTADOS */
+
+async function loadResultados() {
+
+  const table =
+    document.getElementById("tabla-resultados");
+
+  table.innerHTML = "";
+
+  const snap =
+    await getDocs(collection(db, "fotografia_calificaciones"));
+
+  snap.forEach((docu) => {
+
+    const d = docu.data();
+
+    table.innerHTML += `
+
+      <tr>
+
+        <td>${d.juez || ""}</td>
+        <td>Fotografía</td>
+        <td>${d.total || 0}</td>
+        <td>${d.foto || ""}</td>
+
+      </tr>
+
+    `;
+
+  });
+
+}
+
+/* LOGOUT */
+
+window.logout = async function() {
+
+  await signOut(auth);
+
+  localStorage.clear();
+
+  window.location.href = "login.html";
+
+}
+
+</script>
+
+</body>
+</html>

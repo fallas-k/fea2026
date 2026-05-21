@@ -1,0 +1,396 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Literarias — Festival Estudiantil de las Artes 2026</title>
+<link rel="stylesheet" href="../style.css">
+</head>
+<body>
+
+<header>
+  <h1> Literarias</h1>
+  <p>Festival Estudiantil de las Artes 2026 — Formulario de Calificación</p>
+</header>
+
+<div class="container">
+
+  <!-- Info del juez y participante -->
+  <div class="juez-panel">
+    <h2>Datos del Juez y Participante</h2>
+    <div class="form-row">
+      <div class="form-group">
+        <label>Nombre del Juez</label>
+        <input type="text" id="nombre-juez" value="Hola" readonly>
+      </div>
+      <script>
+        const nombre = localStorage.getItem('username');
+
+        document.getElementById('nombre-juez').value = nombre || '';
+      </script>
+      <div class="form-group">
+        <label>Nombre del Participante</label>
+        <input type="text" id="nombre-participante" placeholder="Nombre del participante">
+      </div>
+    </div>
+    <div class="form-row">
+      <div class="form-group">
+        <label>Nombre de la Fotografía</label>
+        <input type="text" id="nombre-foto" placeholder="Título de la obra">
+      </div>
+      <div>
+        <input type="hidden" id="centro-educativo" value="CTP Jose Figueres Ferrer" >
+      </div>
+    </div>
+    <div>
+      <div>
+      <input type="hidden" name="nivel" value="secundaria">
+      </div>
+    </div>
+  </div>
+
+  <!-- SECCIÓN 1: Aspectos formativos -->
+  <div class="rubrica-seccion">
+    <div class="seccion-header rosa">
+      <span>Aspectos Formativos de la Propuesta Artística</span>
+      <span class="seccion-puntos" id="pts-sec1">0 pts</span>
+    </div>
+    <div id="sec1-criterios">
+      <!-- generado por JS -->
+    </div>
+  </div>
+
+  <!-- SECCIÓN 2: Manual de disciplinas -->
+  <div class="rubrica-seccion">
+    <div class="seccion-header gris">
+      <span>Respeta lo Estipulado en el Manual de Disciplinas Artísticas</span>
+      <span class="seccion-puntos" id="pts-sec2">0 pts</span>
+    </div>
+    <div id="sec2-criterios"></div>
+  </div>
+
+  <!-- SECCIÓN 3: Aspectos técnico-artísticos -->
+  <div class="rubrica-seccion">
+    <div class="seccion-header oscuro">
+      <span>Aspectos Técnico-Artísticos</span>
+      <span class="seccion-puntos" id="pts-sec3">0 pts</span>
+    </div>
+    <div id="sec3-criterios"></div>
+  </div>
+
+  <!-- Totales -->
+  <div class="totales">
+    <h2>Resumen de Puntuación</h2>
+    <div class="totales-grid">
+      <div class="total-card rosa-bg">
+        <div class="numero" id="total-sec1">0</div>
+        <div class="etiqueta">Formativos</div>
+      </div>
+      <div class="total-card gris-bg">
+        <div class="numero" id="total-sec2">0</div>
+        <div class="etiqueta">Manual</div>
+      </div>
+      <div class="total-card oscuro-bg">
+        <div class="numero" id="total-sec3">0</div>
+        <div class="etiqueta">Técnico-Artísticos</div>
+      </div>
+      <div class="total-card total-bg">
+        <div class="numero" id="total-general">0</div>
+        <div class="etiqueta">Total General</div>
+      </div>
+    </div>
+
+    <!-- Recomendación final -->
+    <div class="recomendacion">
+      <input type="checkbox" id="check-recomendacion">
+      <label for="check-recomendacion">
+        Propongo esta obra para ser considerada en la deliberación con posibilidad de ser invitada a la siguiente etapa del festival.
+      </label>
+    </div>
+  </div>
+
+  <!-- Botón guardar -->
+  <button class="btn-guardar" onclick="guardarCalificacion()">
+    💾 Guardar Calificación
+  </button>
+
+  <a class="btn-admin-link" onclick="abrirModalAdmin()">🔒 Acceso de Administrador</a>
+  <div class="final-photo">
+    <img src="../Imagenes/ciber.jpeg" alt="Marca de agua FEA">
+    <img src="../Imagenes/Untitled.jpeg" alt="Marca de agua FEA">
+  </div>
+
+</div>
+
+<!-- Modal Admin -->
+<div class="modal-overlay" id="modal-admin">
+  <div class="modal">
+    <h3>🔒 Acceso Restringido</h3>
+    <p style="font-size:0.85rem; color:#666; margin-bottom:1rem; font-family:Arial,sans-serif;">
+      Solo el equipo administrador puede ver los resultados guardados.
+    </p>
+    <input type="password" id="input-password" placeholder="Contraseña de administrador">
+    <div class="modal-btns">
+      <button id="btn-confirmar-admin" onclick="verificarAdmin()">Ingresar</button>
+      <button id="btn-cancelar-admin" onclick="cerrarModalAdmin()">Cancelar</button>
+    </div>
+    <p id="error-admin" style="color:red; font-size:0.8rem; margin-top:0.5rem; display:none; font-family:Arial,sans-serif;">
+      Contraseña incorrecta. Intente de nuevo.
+    </p>
+  </div>
+</div>
+
+<!-- Panel Admin -->
+<div class="container">
+  <div id="admin-panel">
+    <div class="admin-header">
+      <span>📊 Resultados Guardados — Fotografía</span>
+      <div style="display:flex;gap:0.5rem;">
+        <button onclick="exportarCSV()">Exportar CSV</button>
+        <button onclick="limpiarDatos()">Limpiar todos</button>
+        <button onclick="cerrarAdmin()">Cerrar</button>
+      </div>
+    </div>
+    <div id="contenido-admin" style="padding: 1rem;">
+      <p class="sin-datos">No hay calificaciones guardadas aún.</p>
+    </div>
+  </div>
+</div>
+
+<!-- Alerta -->
+<div class="alerta" id="alerta">✅ Calificación guardada correctamente</div>
+
+<script>
+const ADMIN_PASS = "fea2026admin";
+const STORAGE_KEY = "fotografia_calificaciones";
+
+const secciones = {
+  sec1: [
+    { id: "s1c1", texto: "La obra se acoge al artículo 3 de la Normativa para la organización y ejecución del Festival Estudiantil de las Artes 2026.", negrita: false },
+    { id: "s1c2", texto: "Se acoge a los objetivos del festival y a las sugerencias de temas. Promueve aspectos como: derechos humanos, identidad cultural, aprecio por tradiciones y costumbres, sentido de pertenencia, convivencia pacífica, fomenta igualdad y equidad, cultura de paz basada en el respeto por la diversidad, la conservación del medio ambiente, la vida silvestre, la naturaleza y la biodiversidad.", negrita: false },
+    { id: "s1c3", texto: "El contenido general y mensaje de la obra artística incorpora una reflexión crítica y analítica de la realidad actual.", negrita: false },
+    { id: "s1c4", texto: "Es evidente la intervención y mediación pedagógica de las personas docentes y del centro educativo tomando en cuenta que el contenido del cuento está acorde con los objetivos del festival y con lo que se establece en la Normativa y en el Manual de disciplinas artísticas.", negrita: false }
+  ],
+  sec2: [
+    { id: "s2c1", texto: "El cuento es original.", negrita: false },
+    { id: "s2c2", texto: "Respeta la cantidad de integrantes según el Manual de disciplinas artísticas: 1 estudiante (la participación es estrictamente individual).", negrita: false },
+    { id: "s2c3", texto: "Respeta la extensión que se indica en el Manual de disciplinas artísticas: la extensión del cuento deberá ser de más de dos páginas; y como máximo, siete páginas tamaño carta.", negrita: false },
+    { id: "s2c4", texto: "Si se presenta a mano deberá escribirse con letra legible. Si se presenta de manera impresa, deberá hacerse, preferiblemente, con letra 12, Times New Roman, a espacio doble, con sangría.", negrita: false }
+  ],
+  sec3: [
+    { id: "s3c1", texto: "Presenta correspondencia con las características de género cuento y creatividad en la construcción narrativa.", negrita: true },
+    { id: "s3c2", texto: "Desarrollo del tema y presentación de espacios.", negrita: true },
+    { id: "s3c3", texto: "Efectividad del narrador.", negrita: true },
+    { id: "s3c4", texto: "Aspectos formales de puntuación y ortografía.", negrita: true },
+    { id: "s3c5", texto: "Presenta los componentes estructurales correspondientes (ver Anexo 1. Cuento).", negrita: true },
+    { id: "s3c6", texto: "Propongo esta obra artística para que sea considerada en la deliberación con posibilidad de ser invitada a la siguiente etapa del festival.", negrita: true }
+  ]
+};
+const votos = {};
+
+function renderizarCriterios(seccionId, criterios) {
+  const contenedor = document.getElementById(seccionId + "-criterios");
+  contenedor.innerHTML = criterios.map(c => `
+    <div class="criterio-item" id="item-${c.id}">
+      <div class="criterio-texto ${c.negrita ? 'negrita' : ''}">${c.texto}</div>
+      <div class="criterio-botones">
+        <button class="btn-si" id="si-${c.id}" onclick="votar('${c.id}', true)">✔ SÍ</button>
+        <button class="btn-no" id="no-${c.id}" onclick="votar('${c.id}', false)">✘ NO</button>
+      </div>
+    </div>
+  `).join('');
+}
+
+function votar(id, esSi) {
+  votos[id] = esSi;
+  const btnSi = document.getElementById("si-" + id);
+  const btnNo = document.getElementById("no-" + id);
+  btnSi.classList.toggle("activo", esSi);
+  btnNo.classList.toggle("activo", !esSi);
+  actualizarTotales();
+}
+
+function contarSeccion(criterios) {
+  return criterios.filter(c => votos[c.id] === true).length;
+}
+
+function actualizarTotales() {
+  const p1 = contarSeccion(secciones.sec1);
+  const p2 = contarSeccion(secciones.sec2);
+  const p3 = contarSeccion(secciones.sec3);
+  const total = p1 + p2 + p3;
+
+  document.getElementById("pts-sec1").textContent = p1 + " pts";
+  document.getElementById("pts-sec2").textContent = p2 + " pts";
+  document.getElementById("pts-sec3").textContent = p3 + " pts";
+  document.getElementById("total-sec1").textContent = p1;
+  document.getElementById("total-sec2").textContent = p2;
+  document.getElementById("total-sec3").textContent = p3;
+  document.getElementById("total-general").textContent = total;
+}
+
+function guardarCalificacion() {
+  const juez = document.getElementById("nombre-juez").value.trim();
+  const participante = document.getElementById("nombre-participante").value.trim();
+  const foto = document.getElementById("nombre-foto").value.trim();
+  const centro = document.getElementById("centro-educativo").value.trim();
+
+  if (!juez || !participante) {
+    alert("Por favor complete el nombre del juez y del participante.");
+    return;
+  }
+
+  const niveles = Array.from(document.querySelectorAll('input[name="nivel"]:checked'))
+    .map(el => el.value).join(", ");
+
+  const p1 = contarSeccion(secciones.sec1);
+  const p2 = contarSeccion(secciones.sec2);
+  const p3 = contarSeccion(secciones.sec3);
+  const total = p1 + p2 + p3;
+  const recomendada = document.getElementById("check-recomendacion").checked;
+
+  const registro = {
+    id: Date.now(),
+    fecha: new Date().toLocaleString("es-CR"),
+    juez,
+    participante,
+    foto,
+    centro,
+    niveles,
+    sec1: p1,
+    sec2: p2,
+    sec3: p3,
+    total,
+    recomendada,
+    votos: {...votos}
+  };
+
+  const datos = JSON.parse(localStorage.getItem(STORAGE_KEY) || "[]");
+  datos.push(registro);
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(datos));
+
+  mostrarAlerta("✅ Calificación guardada correctamente");
+}
+
+function mostrarAlerta(msg) {
+  const a = document.getElementById("alerta");
+  a.textContent = msg;
+  a.style.display = "block";
+  setTimeout(() => a.style.display = "none", 3000);
+}
+
+function abrirModalAdmin() {
+  document.getElementById("modal-admin").classList.add("visible");
+  document.getElementById("input-password").value = "";
+  document.getElementById("error-admin").style.display = "none";
+}
+
+function cerrarModalAdmin() {
+  document.getElementById("modal-admin").classList.remove("visible");
+}
+
+function verificarAdmin() {
+  const pass = document.getElementById("input-password").value;
+  if (pass === ADMIN_PASS) {
+    cerrarModalAdmin();
+    mostrarAdmin();
+  } else {
+    document.getElementById("error-admin").style.display = "block";
+  }
+}
+
+function mostrarAdmin() {
+  const panel = document.getElementById("admin-panel");
+  panel.style.display = "block";
+  panel.scrollIntoView({ behavior: "smooth" });
+
+  const datos = JSON.parse(localStorage.getItem(STORAGE_KEY) || "[]");
+  const contenido = document.getElementById("contenido-admin");
+
+  if (datos.length === 0) {
+    contenido.innerHTML = '<p class="sin-datos">No hay calificaciones guardadas aún.</p>';
+    return;
+  }
+
+  contenido.innerHTML = `
+    <table id="tabla-resultados">
+      <thead>
+        <tr>
+          <th>Fecha</th>
+          <th>Juez</th>
+          <th>Participante</th>
+          <th>Fotografía</th>
+          <th>Centro</th>
+          <th>Formativos</th>
+          <th>Manual</th>
+          <th>Técnico</th>
+          <th>Total</th>
+          <th>Propuesta</th>
+        </tr>
+      </thead>
+      <tbody>
+        ${datos.map(r => `
+          <tr>
+            <td>${r.fecha}</td>
+            <td>${r.juez}</td>
+            <td>${r.participante}</td>
+            <td>${r.foto || '—'}</td>
+            <td>${r.centro || '—'}</td>
+            <td>${r.sec1}</td>
+            <td>${r.sec2}</td>
+            <td>${r.sec3}</td>
+            <td><span class="badge-puntos">${r.total}</span></td>
+            <td>${r.recomendada ? '✔ Sí' : '—'}</td>
+          </tr>
+        `).join('')}
+      </tbody>
+    </table>
+    <p style="font-size:0.78rem; color:#999; margin-top:0.8rem; font-family:Arial,sans-serif; text-align:right;">
+      Total de calificaciones: ${datos.length}
+    </p>
+  `;
+}
+
+function cerrarAdmin() {
+  document.getElementById("admin-panel").style.display = "none";
+}
+
+function limpiarDatos() {
+  if (confirm("¿Está seguro de que desea eliminar TODAS las calificaciones guardadas? Esta acción no se puede deshacer.")) {
+    localStorage.removeItem(STORAGE_KEY);
+    mostrarAdmin();
+    mostrarAlerta("🗑 Todos los registros han sido eliminados.");
+  }
+}
+
+function exportarCSV() {
+  const datos = JSON.parse(localStorage.getItem(STORAGE_KEY) || "[]");
+  if (datos.length === 0) { alert("No hay datos para exportar."); return; }
+
+  const cabecera = ["Fecha","Juez","Participante","Fotografía","Centro","Nivel","Formativos","Manual","Técnico-Artístico","Total","Propuesta"];
+  const filas = datos.map(r => [
+    r.fecha, r.juez, r.participante, r.foto, r.centro, r.niveles,
+    r.sec1, r.sec2, r.sec3, r.total, r.recomendada ? "Sí" : "No"
+  ].map(v => `"${(v||'').toString().replace(/"/g,'""')}"`).join(","));
+
+  const csv = [cabecera.join(","), ...filas].join("\n");
+  const blob = new Blob(["\uFEFF" + csv], { type: "text/csv;charset=utf-8;" });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement("a");
+  a.href = url;
+  a.download = "fotografia_resultados.csv";
+  a.click();
+  URL.revokeObjectURL(url);
+}
+
+document.getElementById("input-password").addEventListener("keydown", e => {
+  if (e.key === "Enter") verificarAdmin();
+});
+
+renderizarCriterios("sec1", secciones.sec1);
+renderizarCriterios("sec2", secciones.sec2);
+renderizarCriterios("sec3", secciones.sec3);
+actualizarTotales();
+</script>
+</body>
+</html>

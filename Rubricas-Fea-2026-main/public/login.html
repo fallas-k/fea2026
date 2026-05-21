@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <title>Login</title>
+
+  <link rel="stylesheet" href="styleindex.css">
+</head>
+<body>
+
+<header class="topbar">
+  <div class="brand">
+    <span>FEA 2026</span>
+  </div>
+
+  <img class="topbar-logo" src="Imagenes/26FEA.webp" alt="Logo FEA 2026">
+</header>
+
+<img class="imagen-esquina" src="Imagenes/ciber.jpeg" alt="Marca de agua">
+<img class="imagen-esquina-iz" src="Imagenes/Untitled.jpeg" alt="Marca de agua">
+
+<main>
+  <section class="section-home">
+
+    <div class="login-card">
+
+      <h2>Iniciar Sesión</h2>
+
+      <div class="login-error" id="login-error"></div>
+
+      <div>
+        <label>Usuario</label>
+        <input id="login-username" type="text" placeholder="usuario">
+      </div>
+
+      <div>
+        <label>Contraseña</label>
+        <input id="login-password" type="password" placeholder="******">
+      </div>
+
+      <button id="login-btn" class="btn primary">
+        Entrar
+      </button>
+
+    </div>
+
+  </section>
+</main>
+
+<script type="module">
+
+import { db } from "./firebase.js";
+import { collection, getDocs } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+
+const loginBtn = document.getElementById("login-btn");
+const loginError = document.getElementById("login-error");
+
+loginBtn.addEventListener("click", async () => {
+
+  const username = document.getElementById("login-username").value.trim();
+  const password = document.getElementById("login-password").value.trim();
+
+  loginError.textContent = "";
+
+  try {
+
+    const snap = await getDocs(collection(db, "usuarios"));
+
+    let userData = null;
+
+    snap.forEach(doc => {
+      const datos = doc.data();
+
+      if (
+        datos.usuario?.trim().toLowerCase() === username.toLowerCase() &&
+        datos.password?.trim() === password
+      ) {
+        userData = datos;
+      }
+
+    });
+
+    if (!userData) {
+      loginError.textContent = "Usuario o contraseña incorrectos";
+      return;
+    }
+
+    // 🔐 SESIÓN
+    const rol = (userData.rol || "").trim().toLowerCase();
+
+    localStorage.setItem("user", userData.usuario);
+    localStorage.setItem("nombre", userData.nombre);
+    localStorage.setItem("rol", rol);
+
+    console.log("ROL GUARDADO:", rol);
+
+    // 🚀 REDIRECCIÓN CENTRALIZADA
+    if (rol === "literarias") {
+      window.location.href = "literario.html";
+      return;
+    }
+
+    if (rol === "visuales") {
+      window.location.href = "visuales.html";
+      return;
+    }
+
+    if (rol === "musicales") {
+      window.location.href = "musica.html";
+      return;
+    }
+
+    if (rol === "escenica") {
+      window.location.href = "escenicas.html";
+      return;
+    }
+
+    if (rol === "admin") {
+      window.location.href = "admin.html";
+      return;
+    }
+
+    loginError.textContent = "Rol inválido: " + rol;
+
+  } catch (err) {
+    console.error(err);
+    loginError.textContent = "Error del sistema";
+  }
+
+});
+
+</script>
+
+</body>
+</html>

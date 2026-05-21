@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Escénicas</title>
+
+  <link rel="stylesheet" href="styleindex.css">
+</head>
+<body>
+
+<header class="topbar">
+
+  <div class="brand">
+    <span>FEA 2026</span>
+  </div>
+
+  <img class="topbar-logo" src="Imagenes/26FEA.webp" alt="Logo FEA 2026">
+
+  <div class="header-actions">
+
+    <button id="logout-btn" class="btn">
+      🚪 Cerrar Sesión
+    </button>
+
+  </div>
+
+</header>
+
+<img class="imagen-esquina" src="Imagenes/ciber.jpeg" alt="Marca de agua">
+<img class="imagen-esquina-iz" src="Imagenes/Untitled.jpeg" alt="Marca de agua">
+
+<main>
+
+  <section class="section-home">
+
+    <div class="home-welcome">
+
+      <h1>¡Bienvenido(a)!</h1>
+
+      <p>
+        Accede a las secciones de Artes Escénicas.
+      </p>
+
+      <div class="home-cta">
+
+        <a class="nav-btn" href="escenicas/teatro.html">
+          Teatro
+        </a>
+
+        <a class="nav-btn" href="escenicas/danza.html">
+          Danza
+        </a>
+
+        <a class="nav-btn" href="escenicas/coreografia.html">
+          Coreografía
+        </a>
+
+        <a class="nav-btn" href="escenicas/monologo.html">
+          Monólogo
+        </a>
+
+      </div>
+
+    </div>
+
+  </section>
+
+</main>
+
+<script>
+
+const rol = localStorage.getItem("rol");
+
+console.log("ROL ACTUAL:", rol);
+
+if (
+  rol?.trim().toLowerCase() !== "escenica" &&
+  rol?.trim().toLowerCase() !== "escenicas"
+) {
+  window.location.href = "login.html";
+}
+
+document.getElementById("logout-btn").addEventListener("click", () => {
+
+  localStorage.clear();
+
+  window.location.href = "login.html";
+
+});
+
+</script>
+
+</body>
+</html>
